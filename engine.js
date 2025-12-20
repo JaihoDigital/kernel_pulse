@@ -1,34 +1,34 @@
-document.addEventListener('DOMContentLoaded', async () => {
-    // ... Existing Variables ...
-    const dashboard = document.getElementById('dashboardContent');
-    const systemHealth = document.getElementById('systemHealth');
-    const lastScan = document.getElementById('lastScan');
-    const scanBtn = document.getElementById('scanBtn');
-    const autoRefreshToggle = document.getElementById('autoRefresh');
-    const globalText = document.getElementById('globalText');
-    
-    // NEW Variables for Probe
-    const btnProbe = document.getElementById('btnProbe');
-    const customUrlInput = document.getElementById('customUrl');
-    const probeResult = document.getElementById('probeResult');
+document.addEventListener("DOMContentLoaded", async () => {
+
+    const dashboard = document.getElementById("dashboardContent");
+    const systemHealth = document.getElementById("systemHealth");
+    const lastScan = document.getElementById("lastScan");
+    const scanBtn = document.getElementById("scanBtn");
+    const autoRefreshToggle = document.getElementById("autoRefresh");
+    const globalText = document.getElementById("globalText");
+
+    const btnProbe = document.getElementById("btnProbe");
+    const customUrlInput = document.getElementById("customUrl");
+    const probeResult = document.getElementById("probeResult");
 
     let appConfig = null;
     let autoRefreshInterval = null;
 
-    // 1. Load Config & Init
+    // Load config.json
     try {
-        const configRes = await fetch('config.json');
-        appConfig = await configRes.json();
+        const res = await fetch("config.json");
+        appConfig = await res.json();
         renderDashboard(appConfig, dashboard);
-        runScan(); 
-    } catch (e) {
-        dashboard.innerHTML = `<div style="color:red; text-align:center; padding:2rem;">KERNEL ERROR: Could not load config.json</div>`;
+        runScan();
+    } catch {
+        dashboard.innerHTML =
+            "<div style='color:red;padding:2rem;'>Failed to load config.json</div>";
     }
 
-    // 2. Existing Listeners
-    scanBtn.addEventListener('click', runScan);
-    autoRefreshToggle.addEventListener('change', (e) => {
-        if(e.target.checked) {
+    scanBtn.addEventListener("click", runScan);
+
+    autoRefreshToggle.addEventListener("change", (e) => {
+        if (e.target.checked) {
             runScan();
             autoRefreshInterval = setInterval(runScan, 30000);
         } else {
@@ -36,135 +36,121 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // 3. NEW: Custom Probe Listener
-    btnProbe.addEventListener('click', async () => {
+    btnProbe.addEventListener("click", async () => {
         let url = customUrlInput.value.trim();
         if (!url) return;
 
-        // Auto-add https if missing
-        if (!url.startsWith('http')) {
-            url = 'https://' + url;
-            customUrlInput.value = url; // Update UI
+        if (!url.startsWith("http")) {
+            url = "https://" + url;
+            customUrlInput.value = url;
         }
 
-        // Show Loading
-        probeResult.className = 'probe-result loading';
-        probeResult.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Pinging target...';
-        probeResult.classList.remove('hidden');
+        probeResult.className = "probe-result loading";
+        probeResult.innerHTML = "Checking...";
+        probeResult.classList.remove("hidden");
 
-        // Check Logic
-        const isUp = await checkConnectivity(url);
+        const result = await ping(url);
 
-        // Show Result
-        if (isUp) {
-            probeResult.className = 'probe-result success';
-            probeResult.innerHTML = `<i class="fas fa-check-circle"></i> TARGET ONLINE: ${url} is reachable.`;
+        if (result.up) {
+            probeResult.className = "probe-result success";
+            probeResult.innerHTML = `ONLINE • ${result.responseTime} ms`;
         } else {
-            probeResult.className = 'probe-result error';
-            probeResult.innerHTML = `<i class="fas fa-times-circle"></i> TARGET UNREACHABLE: Could not connect to host.`;
+            probeResult.className = "probe-result error";
+            probeResult.innerHTML = "OFFLINE";
         }
     });
-
-    // Allow "Enter" key in input
-    customUrlInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') btnProbe.click();
-    });
-
-    // --- CORE LOGIC (Same as before) ---
 
     async function runScan() {
         if (!appConfig) return;
-        
-        scanBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> SCANNING...';
-        scanBtn.disabled = true;
-        scanBtn.style.opacity = "0.7";
-        
-        const now = new Date();
-        lastScan.innerText = now.toLocaleTimeString();
 
-        const services = appConfig.categories.flatMap(cat => cat.services);
+        scanBtn.disabled = true;
+        scanBtn.innerText = "SCANNING...";
+        lastScan.innerText = new Date().toLocaleTimeString();
+
         let globalFail = false;
 
-        const checks = services.map(async (svc) => {
-            updateStatusUI(svc.id, 'loading');
-            const isUp = await checkConnectivity(svc.url);
-            updateStatusUI(svc.id, isUp ? 'up' : 'down');
-            if (!isUp) globalFail = true;
-        });
-
-        await Promise.all(checks);
-
-        if (globalFail) {
-            systemHealth.className = 'pulse-status error';
-            globalText.innerText = 'SYSTEM WARNING';
-        } else {
-            systemHealth.className = 'pulse-status';
-            globalText.innerText = 'SYSTEM NORMAL';
+        for (const cat of appConfig.categories) {
+            for (const svc of cat.services) {
+                updateStatusUI(svc.id, "loading");
+                const result = await ping(svc.url);
+                updateStatusUI(svc.id, result.up ? "up" : "down", result);
+                if (!result.up) globalFail = true;
+            }
         }
 
-        scanBtn.innerHTML = '<i class="fas fa-radar"></i> SCAN NETWORK';
+        systemHealth.className = globalFail
+            ? "pulse-status error"
+            : "pulse-status";
+        globalText.innerText = globalFail
+            ? "SYSTEM WARNING"
+            : "SYSTEM NORMAL";
+
         scanBtn.disabled = false;
-        scanBtn.style.opacity = "1";
+        scanBtn.innerHTML = '<i class="fas fa-radar"></i> SCAN NETWORK';
     }
 
-    async function checkConnectivity(url) {
+    async function ping(url) {
         try {
-            await fetch(url, { method: 'HEAD', mode: 'no-cors', cache: 'no-cache' });
-            return true;
-        } catch (error) {
-            console.warn(`Connection failed: ${url}`);
-            return false;
+            const res = await fetch(`/api/ping?url=${encodeURIComponent(url)}`);
+            return await res.json();
+        } catch {
+            return { up: false };
         }
     }
 
     function renderDashboard(config, container) {
-        container.innerHTML = '';
+        container.innerHTML = "";
         config.categories.forEach(cat => {
-            const title = document.createElement('div');
-            title.className = 'category-title';
+            const title = document.createElement("div");
+            title.className = "category-title";
             title.innerText = cat.name;
             container.appendChild(title);
-            
-            const grid = document.createElement('div');
-            grid.className = 'grid';
-            
+
+            const grid = document.createElement("div");
+            grid.className = "grid";
+
             cat.services.forEach(svc => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.id = `card-${svc.id}`;
-                card.onclick = () => window.open(svc.url, '_blank');
-                card.style.cursor = 'pointer';
-                
+                const card = document.createElement("div");
+                card.className = "card";
                 card.innerHTML = `
                     <div class="card-header">
                         <h3>${svc.name}</h3>
-                        <div class="status-indicator loading" id="status-${svc.id}">WAITING</div>
+                        <div class="status-indicator loading" id="status-${svc.id}">
+                            WAITING
+                        </div>
                     </div>
                     <p>${svc.desc}</p>
-                    <div class="response-time" id="msg-${svc.id}">Ready to scan</div>
+                    <div class="response-time" id="msg-${svc.id}">
+                        Ready
+                    </div>
                 `;
                 grid.appendChild(card);
             });
+
             container.appendChild(grid);
         });
     }
 
-    function updateStatusUI(id, state) {
+    function updateStatusUI(id, state, data = {}) {
         const badge = document.getElementById(`status-${id}`);
         const msg = document.getElementById(`msg-${id}`);
-        
-        if (state === 'loading') {
-            badge.className = 'status-indicator loading';
-            badge.innerText = 'CHECKING...';
-            msg.innerText = 'Pinging host...';
-        } else if (state === 'up') {
-            badge.className = 'status-indicator up';
-            badge.innerText = 'ONLINE';
-            msg.innerText = 'Connection established';
-        } else {
-            badge.className = 'status-indicator down';
-            badge.innerText = 'OFFLINE';
-            msg.innerText = 'Host unreachable';
+
+        if (state === "loading") {
+            badge.className = "status-indicator loading";
+            badge.innerText = "CHECKING";
+            msg.innerText = "Pinging...";
+        }
+
+        if (state === "up") {
+            badge.className = "status-indicator up";
+            badge.innerText = "ONLINE";
+            msg.innerText = `Response: ${data.responseTime} ms`;
+        }
+
+        if (state === "down") {
+            badge.className = "status-indicator down";
+            badge.innerText = "OFFLINE";
+            msg.innerText = "Unreachable";
         }
     }
 });
