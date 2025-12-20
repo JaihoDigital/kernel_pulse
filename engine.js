@@ -10,9 +10,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     const btnProbe = document.getElementById("btnProbe");
     const customUrlInput = document.getElementById("customUrl");
     const probeResult = document.getElementById("probeResult");
+    const probeHistoryList = document.getElementById("probeHistoryList");
 
     let appConfig = null;
     let autoRefreshInterval = null;
+
+    const HISTORY_KEY = "kernel_pulse_probe_history";
+    const MAX_HISTORY = 10;
 
     // Load config.json
     try {
@@ -25,8 +29,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             "<div style='color:red;padding:2rem;'>Failed to load config.json</div>";
     }
 
+    // Manual Scan
     scanBtn.addEventListener("click", runScan);
 
+    // Auto Refresh (30s)
     autoRefreshToggle.addEventListener("change", (e) => {
         if (e.target.checked) {
             runScan();
@@ -36,7 +42,21 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     });
 
-    btnProbe.addEventListener("click", async () => {
+    // Quick Probe click
+    btnProbe.addEventListener("click", runProbe);
+
+    // ENTER key support
+    customUrlInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            runProbe();
+        }
+    });
+
+    // Load history on start
+    renderProbeHistory();
+
+    async function runProbe() {
         let url = customUrlInput.value.trim();
         if (!url) return;
 
@@ -46,19 +66,22 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         probeResult.className = "probe-result loading";
-        probeResult.innerHTML = "Checking...";
+        probeResult.innerText = "Checking...";
         probeResult.classList.remove("hidden");
 
         const result = await ping(url);
 
         if (result.up) {
             probeResult.className = "probe-result success";
-            probeResult.innerHTML = `ONLINE • ${result.responseTime} ms`;
+            probeResult.innerText = `ONLINE • ${result.responseTime} ms`;
         } else {
             probeResult.className = "probe-result error";
-            probeResult.innerHTML = "OFFLINE";
+            probeResult.innerText = "OFFLINE";
         }
-    });
+
+        saveToHistory(url);
+        renderProbeHistory();
+    }
 
     async function runScan() {
         if (!appConfig) return;
@@ -97,6 +120,45 @@ document.addEventListener("DOMContentLoaded", async () => {
             return { up: false };
         }
     }
+
+    // 🔥 HISTORY LOGIC (CLIENT SIDE)
+
+    function saveToHistory(url) {
+        let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+
+        // Remove duplicates
+        history = history.filter(item => item !== url);
+
+        // Add to top
+        history.unshift(url);
+
+        // Limit size
+        if (history.length > MAX_HISTORY) {
+            history.pop();
+        }
+
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    }
+
+    function renderProbeHistory() {
+        const history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+        probeHistoryList.innerHTML = "";
+
+        history.forEach(url => {
+            const li = document.createElement("li");
+            li.innerText = url;
+            li.style.cursor = "pointer";
+
+            li.addEventListener("click", () => {
+                customUrlInput.value = url;
+                runProbe();
+            });
+
+            probeHistoryList.appendChild(li);
+        });
+    }
+
+    // UI Rendering
 
     function renderDashboard(config, container) {
         container.innerHTML = "";
@@ -153,4 +215,5 @@ document.addEventListener("DOMContentLoaded", async () => {
             msg.innerText = "Unreachable";
         }
     }
+
 });

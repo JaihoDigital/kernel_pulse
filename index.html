@@ -53,7 +53,7 @@
 
             <div class="footer-info">
                 <p>Powered by <strong>Kernel Pulse</strong></p>
-                <p class="version">v2.2.0 (Kernel)</p>
+                <p class="version">v2.3.0 (Kernel)</p>
             </div>
         </aside>
 
@@ -63,7 +63,7 @@
                 <p class="last-checked">Last scan: <span id="lastScan">Waiting...</span></p>
             </header>
 
-            <div class="quick-probe-panel">
+            <!--<div class="quick-probe-panel">
                 <div class="probe-header">
                     <h3><i class="fas fa-search-location"></i> Quick Probe</h3>
                     <p>Test connectivity to any external endpoint.</p>
@@ -74,7 +74,36 @@
                 </div>
                 <div id="probeResult" class="probe-result hidden">
                     </div>
+            </div>---->
+
+            <div class="quick-probe-panel">
+    <div class="probe-layout">
+
+        <!-- LEFT: Quick Probe -->
+        <div class="probe-main">
+            <div class="probe-header">
+                <h3><i class="fas fa-search-location"></i> Quick Probe</h3>
+                <p>Test connectivity to any external endpoint.</p>
             </div>
+
+            <div class="probe-form">
+                <input type="text" id="customUrl" placeholder="https://example.com" autocomplete="off">
+                <button id="btnProbe">PING</button>
+            </div>
+
+            <div id="probeResult" class="probe-result hidden"></div>
+        </div>
+
+        <!-- RIGHT: History -->
+        <div class="probe-history">
+            <h4>History</h4>
+            <ul id="probeHistoryList"></ul>
+        </div>
+
+    </div>
+</div>
+
+
 
             <div id="dashboardContent">
                 <div class="loading">

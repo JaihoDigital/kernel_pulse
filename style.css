@@ -169,6 +169,61 @@ h1 { font-weight: 300; letter-spacing: 1px; }
     font-family: var(--font-mono);
 }
 
+/* Probe Layout */
+.probe-layout {
+    display: grid;
+    grid-template-columns: 1fr 220px;
+    gap: 1.5rem;
+    align-items: flex-start;
+}
+
+/* History Panel */
+.probe-history {
+    background: #000;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.75rem;
+    font-family: var(--font-mono);
+}
+
+.probe-history h4 {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+}
+
+/* History List */
+.probe-history ul {
+    list-style: none;
+    max-height: 120px;
+    overflow-y: auto;
+}
+
+.probe-history li {
+    font-size: 0.75rem;
+    color: var(--primary);
+    padding: 4px 0;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.probe-history li:hover {
+    text-decoration: underline;
+}
+
+/* Scrollbar (subtle) */
+.probe-history ul::-webkit-scrollbar {
+    width: 4px;
+}
+.probe-history ul::-webkit-scrollbar-thumb {
+    background: var(--border);
+}
+
+
 /* Mobile */
 @media (max-width: 768px) {
     /*.terminal-container { flex-direction: column; overflow: auto; }*/
@@ -242,6 +297,13 @@ h1 { font-weight: 300; letter-spacing: 1px; }
     .probe-form button {
         padding: 12px;
         width: 100%;
+    }
+    .probe-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .probe-history {
+        margin-top: 1rem;
     }
 }
 
