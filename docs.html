@@ -220,37 +220,54 @@
         <code>GET https://kernel-pulse.vercel.app/api/json</code>
 
         <p><strong>Example Response:</strong></p>
-<pre><code>{
-  "status": "online",
-  "responseTime": 213,
-  "timestamp": "2025-01-20T12:30:00Z"
-}</code></pre>
+            <pre><code>{
+            "status": "online",
+            "responseTime": 213,
+            "timestamp": "2025-01-20T12:30:00Z"
+            }</code></pre>
 
-        <h3>JavaScript Example</h3>
-<pre><code>fetch('https://kernel-pulse.vercel.app/api/json')
-  .then(response => response.json())
-  .then(data => {
-    console.log('status:', data.status);
-    console.log('ms:', data.responseTime);
-    console.log('time:', data.timestamp);
-  })
-  .catch(error => console.error('Error:', error));</code></pre>
+                    <h3>JavaScript Example</h3>
+            <pre><code>fetch('https://kernel-pulse.vercel.app/api/json')
+            .then(response => response.json())
+            .then(data => {
+                console.log('status:', data.status);
+                console.log('ms:', data.responseTime);
+                console.log('time:', data.timestamp);
+            })
+            .catch(error => console.error('Error:', error));</code></pre>
 
-        <h3>Python Example</h3>
-<pre><code>import requests
+                    <h3>Python Example</h3>
+            <pre><code>import requests
 
-response = requests.get('https://kernel-pulse.vercel.app/api/json')
-data = response.json()
+            response = requests.get('https://kernel-pulse.vercel.app/api/json')
+            data = response.json()
 
-print("status:", data["status"])
-print("ms:", data["responseTime"])
-print("time:", data["timestamp"])</code></pre>
+            print("status:", data["status"])
+            print("ms:", data["responseTime"])
+            print("time:", data["timestamp"])</code></pre>
 
         <p>
             This API is read-only and intended for lightweight integrations,
             dashboards, and monitoring scripts.
         </p>
     </div>
+
+    <div class="doc-section">
+    <h2>API Rate Limits</h2>
+    <p>
+        The Kernel Pulse API is rate-limited to ensure fair usage and platform stability.
+    </p>
+    <ul>
+        <li>Maximum <strong>60 requests per minute per IP</strong></li>
+        <li>Applies to all <code>/api/json</code> requests</li>
+        <li>Exceeding the limit returns HTTP <code>429</code></li>
+    </ul>
+    <p>
+        This API is intended for lightweight monitoring, dashboards, and scripts.
+        Please avoid high-frequency polling.
+    </p>
+</div>
+
 
     <!-- LIMITATIONS -->
     <div class="doc-section">
