@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://kernel-pulse.vercel.app/sitemap.xml

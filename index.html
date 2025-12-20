@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="description" content="Kernel Pulse: A free, open-source, serverless status page monitor. Check infrastructure health instantly. Powered by Jaiho Kernel, Jaiho Digital.">
+    <meta name="keywords" content="status page, uptime monitor, open source status, free uptime check, website monitor, kernel pulse">
+    <meta name="author" content="Jaiho Kernel">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://kernel-pulse.vercel.app/">
+    <meta property="og:title" content="Kernel Pulse | Open Source Status Monitor">
+    <meta property="og:description" content="Instant, serverless infrastructure monitoring. No database required. Free for developers.">
+    <meta property="og:image" content="https://kernel-pulse.vercel.app/assets/images/og-image.png"> <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Kernel Pulse | System Status">
+    <meta name="twitter:description" content="Monitor your websites and APIs for free with Kernel Pulse.">
+    <meta name="twitter:image" content="https://kernel-pulse.vercel.app/assets/images/og-image.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kernel Pulse | System Status</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#00ff88">
+</head>
+<body>
+    <div class="terminal-container">
+        <aside class="sidebar">
+            <div class="brand">
+                <i class="fas fa-microchip"></i> Jaiho Kernel
+            </div>
+            
+            <div class="pulse-status" id="systemHealth">
+                <div class="beacon"></div>
+                <span id="globalText">SYSTEM NORMAL</span>
+            </div>
+
+            <div class="controls-panel">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="autoRefresh">
+                    <span class="slider"></span>
+                </label>
+                <span>Auto-Refresh (30s)</span>
+            </div>
+
+            <button class="btn-scan" id="scanBtn">
+                <i class="fas fa-radar"></i> SCAN NETWORK
+            </button>
+
+            <nav class="menu">
+                <a href="index.html" class="active"><i class="fas fa-heart-pulse"></i> Dashboard</a>
+                <a href="docs.html"><i class="fas fa-book"></i> How to Use?</a>
+                <a href="https://github.com/your-username/jaiho-pulse" target="_blank"><i class="fab fa-github"></i> Fork Repo</a>
+            </nav>
+
+            <div class="footer-info">
+                <p>Powered by <strong>Kernel Pulse</strong></p>
+                <p class="version">v2.2.0 (Kernel)</p>
+            </div>
+        </aside>
+
+        <main class="dashboard">
+            <header>
+                <h1><i class="fas fa-server"></i> Infrastructure Status</h1>
+                <p class="last-checked">Last scan: <span id="lastScan">Waiting...</span></p>
+            </header>
+
+            <div class="quick-probe-panel">
+                <div class="probe-header">
+                    <h3><i class="fas fa-search-location"></i> Quick Probe</h3>
+                    <p>Test connectivity to any external endpoint.</p>
+                </div>
+                <div class="probe-form">
+                    <input type="text" id="customUrl" placeholder="https://example.com" autocomplete="off">
+                    <button id="btnProbe">PING</button>
+                </div>
+                <div id="probeResult" class="probe-result hidden">
+                    </div>
+            </div>
+
+            <div id="dashboardContent">
+                <div class="loading">
+                    <i class="fas fa-circle-notch fa-spin"></i> Initializing Kernel...
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="engine.js"></script>
+</body>
+</html>

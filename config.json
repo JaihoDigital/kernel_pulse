@@ -1,0 +1,26 @@
+{
+  "brand": {
+    "name": "Jaiho Pulse",
+    "parent": "Jaiho Kernel",
+    "url": "https://jaiho-digital.onrender.com",
+    "logo_icon": "fas fa-heart-pulse"
+  },
+  "categories": [
+    {
+      "name": "Utilities & Privacy",
+      "services": [
+        { "id": "j-ip", "name": "Jaiho IP", "url": "https://jaiho-ip.vercel.app", "desc": "IP Detection API" },
+        { "id": "j-invoice", "name": "Jaiho Invoice", "url": "https://jaiho-invoice.vercel.app", "desc": "Invoicing Tool" },
+        { "id": "microstories", "name": "AI Micro Stories", "url": "https://aimicrostories.vercel.app", "desc": "Story Engine" }
+      ]
+    },
+    {
+      "name": "Corporate Infrastructure",
+      "services": [
+        { "id": "digital", "name": "Jaiho Digital", "url": "https://jaiho-digital.onrender.com", "desc": "Parent Portfolio" },
+        { "id": "techserve", "name": "Jaiho TechServe", "url": "https://jaihotechserve.onrender.com", "desc": "Client Services" },
+        { "id": "itarc", "name": "ITARC EdTech", "url": "https://itarc.w3spaces.com", "desc": "Education Platform" }
+      ]
+    }
+  ]
+}
