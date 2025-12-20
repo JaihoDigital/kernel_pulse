@@ -107,28 +107,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         scanBtn.style.opacity = "1";
     }
 
-    /*async function checkConnectivity(url) {
-    try {
-        const res = await fetch(
-            `/api/ping?url=${encodeURIComponent(url)}`
-        );
-        const data = await res.json();
-        return data.up;
-    } catch (e) {
-        return false;
+    async function checkConnectivity(url) {
+        try {
+            await fetch(url, { method: 'HEAD', mode: 'no-cors', cache: 'no-cache' });
+            return true;
+        } catch (error) {
+            console.warn(`Connection failed: ${url}`);
+            return false;
+        }
     }
-}*/
-
-async function checkConnectivity(url) {
-    const res = await fetch(`/api/ping?url=${encodeURIComponent(url)}`);
-    const data = await res.json();
-    return data;
-}
-
-const result = await checkConnectivity(svc.url);
-updateStatusUI(svc.id, result.up ? "up" : "down", result);
-
-
 
     function renderDashboard(config, container) {
         container.innerHTML = '';
@@ -162,19 +149,22 @@ updateStatusUI(svc.id, result.up ? "up" : "down", result);
         });
     }
 
-    function updateStatusUI(id, state, data = {}) {
-    const badge = document.getElementById(`status-${id}`);
-    const msg = document.getElementById(`msg-${id}`);
-
-    if (state === "up") {
-        badge.className = "status-indicator up";
-        badge.innerText = "ONLINE";
-        msg.innerText = `Response: ${data.responseTime} ms`;
-    } else {
-        badge.className = "status-indicator down";
-        badge.innerText = "OFFLINE";
-        msg.innerText = "Last offline: just now";
+    function updateStatusUI(id, state) {
+        const badge = document.getElementById(`status-${id}`);
+        const msg = document.getElementById(`msg-${id}`);
+        
+        if (state === 'loading') {
+            badge.className = 'status-indicator loading';
+            badge.innerText = 'CHECKING...';
+            msg.innerText = 'Pinging host...';
+        } else if (state === 'up') {
+            badge.className = 'status-indicator up';
+            badge.innerText = 'ONLINE';
+            msg.innerText = 'Connection established';
+        } else {
+            badge.className = 'status-indicator down';
+            badge.innerText = 'OFFLINE';
+            msg.innerText = 'Host unreachable';
+        }
     }
-}
-
 });
