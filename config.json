@@ -7,6 +7,14 @@
   },
   "categories": [
     {
+      "name": "Big Techs",
+      "services": [
+        { "id": "google", "name": "Google", "url": "https://google.com", "desc": "Google" },
+        { "id": "facebook", "name": "Facebook", "url": "https://facebook.com", "desc": "Facebook" },
+        { "id": "chatgpt", "name": "ChatGPT", "url": "https://chatgpt.com", "desc": "ChatGPT" }
+      ]
+    },
+    {
       "name": "Utilities & Privacy",
       "services": [
         { "id": "j-ip", "name": "Jaiho IP", "url": "https://jaiho-ip.vercel.app", "desc": "IP Detection API" },
