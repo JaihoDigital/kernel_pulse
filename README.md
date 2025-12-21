@@ -1,68 +1,172 @@
-# 💓 Kernel Pulse
 
-![Status](https://img.shields.io/badge/status-operational-success)
-![License](https://img.shields.io/badge/license-MIT-blue)
-![Privacy](https://img.shields.io/badge/privacy-client--side-green)
+# 🚀 Kernel Pulse
 
-**Kernel Pulse** is a lightweight, open-source, serverless status page generator. 
+**Kernel Pulse** is an open-source, serverless **status page + uptime monitoring tool** built for developers and small teams.
 
-Unlike traditional monitoring tools that require expensive backend servers, Pulse runs entirely in the browser (Client-Side). It provides real-time "Health Checks" for your infrastructure without storing any data.
+It provides:
+- A clean, real-time status dashboard
+- On-demand website & API health checks
+- A public JSON API
+- Zero database, zero backend maintenance
 
-**Live Demo:** [https://jaiho-pulse.vercel.app](https://jaiho-pulse.vercel.app)
-
----
-
-## ⚡ Key Features
-
-* **Serverless:** No database or backend required. Hosted 100% free on Vercel.
-* **Real-Time:** Checks status from the *user's* perspective (accurate connectivity testing).
-* **Quick Probe:** Built-in tool to ping any external URL instantly.
-* **Auto-Refresh:** Continuous monitoring mode (30s intervals).
-* **Privacy First:** No tracking, no logs.
-* **Customizable:** Edit one JSON file to monitor your own projects.
+![Status](https://img.shields.io/badge/status-active-success?style=flat-square)
+![Serverless](https://img.shields.io/badge/serverless-yes-blue?style=flat-square)
+![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
+![Deployed on](https://img.shields.io/badge/deployed%20on-Vercel-black?style=flat-square)
+![API](https://img.shields.io/badge/API-public-brightgreen?style=flat-square)
 
 ---
 
-## 🚀 How to Deploy Your Own
+## ✨ Key Features
 
-You can have your own Status Page running in 30 seconds.
+- ✅ Real-time website & API status checks
+- 🔄 Manual scan + Auto-Refresh (30s)
+- ⚡ Quick Probe for instant URL testing
+- 🕘 Client-side probe history (localStorage)
+- 📡 Public JSON API (`/api/json`)
+- 🛡️ Rate-limited & SSRF-protected API
+- 🌐 Fully serverless (Vercel)
+- 📦 No database, no cron jobs
 
-1.  **Fork this Repository** on GitHub.
-2.  Open `config.json` and update the `services` list with your websites:
-    ```json
+---
+
+## 🧠 How It Works
+
+
+- The UI runs in the browser
+- All network checks are performed server-side
+- Results are returned instantly as JSON
+
+---
+
+## 🖥️ Dashboard Overview
+
+The dashboard displays:
+- Service status (ONLINE / OFFLINE)
+- Response time (ms)
+- Global system health
+- Last scan time
+
+Quick Probe lets you test **any URL instantly**, without editing configuration.
+
+---
+
+## 📂 Configuration (`config.json`)
+
+Kernel Pulse is configured using a single file:
+
+```json
+{
+  "brand": {
+    "name": "Kernel Pulse",
+    "parent": "Jaiho Kernel",
+    "url": "https://jaiho-digital.onrender.com/page_kernel.html",
+    "logo_icon": "fas fa-heart-pulse"
+  },
+  "categories": [
     {
-      "name": "My Status",
+      "name": "Utilities & Privacy",
       "services": [
-        { "id": "my-blog", "name": "Blog", "url": "[https://myblog.com](https://myblog.com)", "desc": "Personal Site" }
+        {
+          "id": "j-ip",
+          "name": "Jaiho IP",
+          "url": "https://jaiho-ip.vercel.app",
+          "desc": "IP Detection API"
+        }
       ]
     }
-    ```
-3.  **Deploy to Vercel or your own Server:**
-    * Go to Vercel.com -> Add New Project.
-    * Select your forked repo.
-    * Click **Deploy**.
+  ]
+}
+```
 
-That's it! 
+### Rules
+- id must be unique
+- url must be publicly accessible
+- No rebuild required — just refresh the page
 
----
+## 🌐 Public API
 
-## 🛠️ Tech Stack
+Kernel Pulse exposes a simple JSON API.
 
-* **Core:** HTML5, CSS3 (Variables), Vanilla JavaScript (ES6+).
-* **Engine:** `fetch` API with `no-cors` mode for maximum compatibility.
-* **Design:** Jaiho Kernel "Hacker" Aesthetic.
+### Endpoint
+`GET /api/json?url=https://example.com`
 
----
+### Example Response
+```
+{
+  "service": "Kernel Pulse",
+  "target": "https://example.com",
+  "status": "online",
+  "up": true,
+  "responseTimeMs": 213,
+  "checkedAt": "2025-01-20T12:30:00Z",
+  "source": "vercel-serverless"
+}
+```
+
+### JavaScript Example
+```
+fetch('https://kernel-pulse.vercel.app/api/json?url=https://google.com')
+  .then(res => res.json())
+  .then(data => {
+    console.log(data.status);
+    console.log(data.responseTimeMs);
+  });
+```
+
+### Python Example
+```
+import requests
+
+r = requests.get(
+    "https://kernel-pulse.vercel.app/api/json",
+    params={"url": "https://google.com"}
+)
+
+print(r.json())
+```
+
+## 🚦 API Rate Limits
+- 60 requests per minute per IP
+- Applies to /api/json
+- Returns HTTP 429 if exceeded
+
+This API is intended for lightweight monitoring and dashboards.
+
+## 🚀 Deployment
+### Deploy on Vercel or your own Server
+1. Fork the repository
+2. Go to https://vercel.com
+3. Import the GitHub repo
+4. Click Deploy
+
+No build step required. These steps are for using Vercel.
+
+## 🧰 Tech Stack
+- **Frontend:** HTML, CSS, Vanilla JavaScript
+- **Backend:** Vercel Serverless Functions
+- **Storage:** None (client-side localStorage only)
+- **Deployment:** Vercel
 
 ## 🤝 Contributing
+Contributions are welcome!
 
-This project is part of the **Jaiho Kernel** initiative.
-Contributions are welcome! Please fork the repo and submit a Pull Request.
+- Fork the repo
+- Create a feature branch
+- Submit a pull request
 
----
+Please keep changes minimal and documented.
 
-## 📄 License
+## 📜 License
+This project is licensed under the `MIT License`.
 
-Distributed under the **MIT License**. See `LICENSE` for more information.
+## 💡 Philosophy
+Kernel Pulse is intentionally simple:
+- No background jobs
+- No databases
+- No vendor lock-in
 
-Developed by **Arshvir** @ [Jaiho Digital](https://jaiho-digital.onrender.com).
+Transparency > complexity.
+<hr>
+
+**Developed by [Jaiho Kernel](https://jaiho-digital.onrender.com/page_kernel.html).**
