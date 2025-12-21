@@ -237,14 +237,15 @@
             .catch(error => console.error('Error:', error));</code></pre>
 
                     <h3>Python Example</h3>
-            <pre><code>import requests
+            <pre><code>
+import requests
 
-            response = requests.get('https://kernel-pulse.vercel.app/api/json')
-            data = response.json()
+response = requests.get('https://kernel-pulse.vercel.app/api/json')
+data = response.json()
 
-            print("status:", data["status"])
-            print("ms:", data["responseTime"])
-            print("time:", data["timestamp"])</code></pre>
+print("status:", data["status"])
+print("ms:", data["responseTime"])
+print("time:", data["timestamp"])</code></pre>
 
         <p>
             This API is read-only and intended for lightweight integrations,
