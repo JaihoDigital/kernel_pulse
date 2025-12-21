@@ -1,0 +1,75 @@
+Kernel Pulse – File Structure Explanation
+========================================
+
+/api/json.js
+-------------
+Public JSON API endpoint.
+Checks a target URL via Vercel server and returns:
+- online/offline status
+- response time (ms)
+- timestamp
+Includes:
+- rate limiting
+- SSRF protection
+- request timeout
+
+/api/ping.js
+-------------
+Internal health-check endpoint used by the dashboard UI.
+Performs real connectivity checks for services listed in config.json.
+Returns minimal status data for UI rendering.
+
+/api/status.js
+---------------
+Lightweight status endpoint for badges and external tools.
+Returns basic platform status and timestamp.
+
+/index.html
+------------
+Main dashboard UI.
+Contains:
+- sidebar
+- system health indicator
+- scan controls
+- quick probe UI
+- service cards
+No logic; structure only.
+
+/style.css
+-----------
+Complete UI styling.
+Defines:
+- terminal theme
+- responsive layout
+- cards
+- probe history layout
+- animations
+
+/engine.js
+----------
+Main frontend logic.
+Responsibilities:
+- load config.json
+- trigger scans
+- call serverless APIs
+- update UI state
+- handle auto-refresh
+- manage quick probe history via localStorage
+
+/config.json
+-------------
+User-defined configuration.
+Controls:
+- branding
+- service categories
+- monitored URLs
+No code changes required.
+
+/docs.html
+-----------
+User & developer documentation.
+Explains:
+- how the system works
+- how to configure services
+- how to use the API
+- limitations and philosophy
